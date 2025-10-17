@@ -1516,8 +1516,8 @@ This scenario allows you to ask **natural-language questions** about my personal
         else:
             st.info("No matching films found. Try a different director surname or genre keyword.")
 
+
 if scenario == "15 – Psycho 1960 Film (Trained AI Model)":
-    import streamlit as st
     from movie_quiz import ask_psycho_question  # make sure movie_quiz.py is in the same folder
 
     st.header("🎬 Psycho 1960 - Trained AI Model")
@@ -1539,3 +1539,4 @@ if scenario == "15 – Psycho 1960 Film (Trained AI Model)":
             st.success(f"🎬 Answer: {answer}")
         except Exception as e:
             st.error(f"⚠️ Failed to get answer: {e}")
+
