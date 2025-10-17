@@ -100,7 +100,8 @@ scenario = st.radio(
     ]
 )
 
-# --- Scenario 15: Psycho 1960 Film (Trained AI Model) ---
+
+# --- Scenario 15: Psycho 1960 Film AI Assistant ---
 if scenario == "15 – Psycho 1960 Film (Trained AI Model)":
     st.header("Scenario 15 – Psycho 1960 Film AI Assistant 🎬🧠")
     st.write("This loads the TinyLLaMA base model and applies your fine-tuned Psycho adapter from Hugging Face.")
@@ -112,28 +113,32 @@ if scenario == "15 – Psycho 1960 Film (Trained AI Model)":
     @st.cache_resource
     def load_psycho_model():
         try:
-            base_model_id = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"   # base model on HF
-            adapter_id    = "antfr99/tinylama-psychofilm"          # your adapter on HF
+            base_model_id = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"  # base model on HF
+            adapter_id    = "antfr99/tinylama-psychofilm-v2"         # your adapter on HF
+
+            # Detect device
+            device = "cuda" if torch.cuda.is_available() else "cpu"
 
             # 1️⃣ Load base TinyLLaMA
             tokenizer = AutoTokenizer.from_pretrained(base_model_id)
             model = AutoModelForCausalLM.from_pretrained(
                 base_model_id,
-                torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
-                device_map="auto"
+                dtype=torch.float16 if device=="cuda" else torch.float32,
+                device_map="auto" if device=="cuda" else None
             )
 
-            # 2️⃣ Apply your Psycho adapter from HF
+            # 2️⃣ Apply your Psycho adapter from Hugging Face
             model = PeftModel.from_pretrained(model, adapter_id)
+            model.to(device)
             model.eval()
 
-            return tokenizer, model
+            return tokenizer, model, device
 
         except Exception as e:
             st.error(f"Error loading Psycho model: {e}")
-            return None, None
+            return None, None, None
 
-    tokenizer, model = load_psycho_model()
+    tokenizer, model, device = load_psycho_model()
 
     if tokenizer and model:
         st.success("✅ Psycho TinyLLaMA adapter loaded successfully!")
@@ -145,10 +150,11 @@ if scenario == "15 – Psycho 1960 Film (Trained AI Model)":
         if st.button("Get AI Answer") and question.strip():
             with st.spinner("Generating answer..."):
                 try:
-                    inputs = tokenizer(question, return_tensors="pt").to(model.device)
+                    # Tokenize and move to correct device
+                    inputs = tokenizer(question, return_tensors="pt").to(device)
                     outputs = model.generate(
                         **inputs,
-                        max_length=256,
+                        max_new_tokens=256,
                         temperature=0.7,
                         top_p=0.9,
                         do_sample=True
@@ -160,7 +166,6 @@ if scenario == "15 – Psycho 1960 Film (Trained AI Model)":
                     st.error(f"Error generating answer: {e}")
     else:
         st.warning("⚠️ Model could not be loaded.")
-
 
 
 
