@@ -103,59 +103,48 @@ scenario = st.radio(
 # --- Scenario 15: Psycho 1960 Film (Trained AI Model) ---
 if scenario == "15 – Psycho 1960 Film (Trained AI Model)":
     st.header("Scenario 15 – Psycho 1960 Film AI Assistant 🎬🧠")
-    st.write("Ask questions about the 1960 film *Psycho* using a trained TinyLLaMA model from GitHub.")
+    st.write("This scenario loads your fine-tuned TinyLLaMA model hosted on Hugging Face.")
 
-    import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer
-    import os
-    import tempfile
-    import git  # pip install GitPython
+    import torch
 
     @st.cache_resource
-    def clone_and_load_model(git_url):
-        """Clone the GitHub repo to a temporary folder and load the model."""
-        temp_dir = tempfile.mkdtemp()
-        try:
-            st.info("Cloning GitHub repo...")
-            git.Repo.clone_from(git_url, temp_dir)
-            model_path = os.path.join(temp_dir, "tinylama_psycho_local")
-            tokenizer = AutoTokenizer.from_pretrained(model_path)
-            model = AutoModelForCausalLM.from_pretrained(model_path)
-            return tokenizer, model
-        except Exception as e:
-            st.error(f"Error cloning/loading model: {e}")
-            return None, None
+    def load_model():
+        model_id = "antfr99/tinylama-psychofilm"  # your Hugging Face repo
+        tokenizer = AutoTokenizer.from_pretrained(model_id)
+        model = AutoModelForCausalLM.from_pretrained(
+            model_id,
+            torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
+            device_map="auto"
+        )
+        model.eval()
+        return tokenizer, model
 
-    model_url = "https://github.com/antfr99/datasqlmllama.git"
-    tokenizer, model = clone_and_load_model(model_url)
+    tokenizer, model = load_model()
 
     if tokenizer and model:
-        st.success("Model loaded successfully!")
-        user_question = st.text_area(
-            "Ask a question about *Psycho* (1960):",
-            placeholder="Example: Who directed Psycho? What is the main plot twist?"
+        st.success("✅ Model loaded successfully from Hugging Face!")
+        question = st.text_area(
+            "Ask about *Psycho* (1960):",
+            placeholder="Example: Who plays Norman Bates? What happens in the shower scene?"
         )
 
-        if st.button("Get AI Answer") and user_question.strip():
+        if st.button("Get AI Answer") and question.strip():
             with st.spinner("Generating answer..."):
                 try:
-                    inputs = tokenizer(user_question, return_tensors="pt")
+                    inputs = tokenizer(question, return_tensors="pt").to(model.device)
                     outputs = model.generate(
                         **inputs,
-                        max_length=200,
-                        do_sample=True,
+                        max_length=256,
                         temperature=0.7,
-                        top_p=0.9
+                        top_p=0.9,
+                        do_sample=True
                     )
                     answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
                     st.write("**AI Answer:**")
                     st.write(answer)
                 except Exception as e:
                     st.error(f"Error generating answer: {e}")
-    else:
-        st.warning("Model could not be loaded.")
-
-
 
 
 # --- Scenario 1: SQL Playground ---
