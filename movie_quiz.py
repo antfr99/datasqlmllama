@@ -1536,23 +1536,3 @@ if scenario != "15 – Psycho 1960 Film (Trained AI Model)":
         st.dataframe(display_ratings, width="stretch", height=400)
     else:
         st.warning("My Ratings table is empty or failed to load.")
-
-# --- Scenario 15: Psycho 1960 AI Quiz only ---
-if scenario == "15 – Psycho 1960 Film (Trained AI Model)":
-    
-    from movie_quiz import ask_psycho_question  # only function, no widgets in movie_quiz.py
-
-    st.header("🎬 Psycho 1960 - Trained AI Model")
-
-    st.markdown("""
-    This AI model was **trained locally** using TinyLlama 1.1B Chat + LoRA.
-    Ask any question about the 1960 film *Psycho* and get AI-generated answers.
-    """)
-
-    question = st.text_input("Ask a question about the 1960 film Psycho:")
-    if question:
-        try:
-            answer = ask_psycho_question(question)
-            st.success(f"🎬 Answer: {answer}")
-        except Exception as e:
-            st.error(f"⚠️ Failed to get answer: {e}")
