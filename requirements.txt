@@ -16,3 +16,4 @@ shap
 requests
 sentence_transformers
 torch
+peft
