@@ -94,6 +94,7 @@ scenario = st.radio(
         "12 – Feature Hypothesis Testing",
         "13 – Semantic Genre & Recommendations (Deep Learning / NLP)",
         "14 – Live Ratings Monitor (MLOps + CI/CD + Monitoring)",
+        "15 – Psycho 1960 Film (Trained AI Model)"
                 
                 
     ]
