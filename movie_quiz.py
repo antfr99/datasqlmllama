@@ -101,7 +101,13 @@ scenario = st.radio(
 )
 
 
+# --- Scenario 15: Psycho 1960 ---
 if scenario == "15 – Psycho 1960 Film (Trained AI Model)":
+
+    # Clear the tables that were already rendered
+    st.empty()  # first table placeholder
+    st.empty()  # second table placeholder
+
     from movie_quiz import ask_psycho_question
 
     st.header("🎬 Psycho 1960 - Trained AI Model")
