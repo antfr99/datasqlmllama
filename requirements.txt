@@ -17,3 +17,5 @@ requests
 sentence_transformers
 torch
 peft
+transformers
+accelerate
