@@ -94,6 +94,7 @@ scenario = st.radio(
         "12 – Feature Hypothesis Testing",
         "13 – Semantic Genre & Recommendations (Deep Learning / NLP)",
         "14 – Live Ratings Monitor (MLOps + CI/CD + Monitoring)",
+        "15 – Psycho 1960 Film (Trained AI Model)"
                 
                 
     ]
@@ -1516,3 +1517,42 @@ This scenario allows you to ask **natural-language questions** about my personal
             st.dataframe(filtered_sorted)
         else:
             st.info("No matching films found. Try a different director surname or genre keyword.")
+
+if scenario != "15 – Psycho 1960 Film (Trained AI Model)":
+
+    st.write("---")
+    st.write("### IMDb Ratings Table")
+    if not IMDB_Ratings.empty:
+        st.dataframe(IMDB_Ratings, width="stretch", height=400)
+    else:
+        st.warning("IMDb Ratings table is empty or failed to load.")
+
+    st.write("### My Ratings Table")
+    if not My_Ratings.empty:
+        My_Ratings['Year_Sort'] = pd.to_numeric(My_Ratings['Year'], errors='coerce')
+        My_Ratings_sorted = My_Ratings.sort_values(by="Year_Sort", ascending=False)
+        display_ratings = My_Ratings_sorted.rename(columns={"Your Rating": "My Ratings"})
+        display_ratings = display_ratings.drop(columns=['Year_Sort'])
+        st.dataframe(display_ratings, width="stretch", height=400)
+    else:
+        st.warning("My Ratings table is empty or failed to load.")
+
+# --- Scenario 15: Psycho 1960 AI Quiz only ---
+if scenario == "15 – Psycho 1960 Film (Trained AI Model)":
+    
+    from movie_quiz import ask_psycho_question  # only function, no widgets in movie_quiz.py
+
+    st.header("🎬 Psycho 1960 - Trained AI Model")
+
+    st.markdown("""
+    This AI model was **trained locally** using TinyLlama 1.1B Chat + LoRA.
+    Ask any question about the 1960 film *Psycho* and get AI-generated answers.
+    """)
+
+    question = st.text_input("Ask a question about the 1960 film Psycho:")
+    if question:
+        try:
+            answer = ask_psycho_question(question)
+            st.success(f"🎬 Answer: {answer}")
+        except Exception as e:
+            st.error(f"⚠️ Failed to get answer: {e}")
