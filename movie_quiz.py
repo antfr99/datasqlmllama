@@ -94,7 +94,6 @@ scenario = st.radio(
         "12 – Feature Hypothesis Testing",
         "13 – Semantic Genre & Recommendations (Deep Learning / NLP)",
         "14 – Live Ratings Monitor (MLOps + CI/CD + Monitoring)",
-        "15 – Psycho 1960 Film (Trained AI Model)"
                 
                 
     ]
@@ -1517,22 +1516,3 @@ This scenario allows you to ask **natural-language questions** about my personal
             st.dataframe(filtered_sorted)
         else:
             st.info("No matching films found. Try a different director surname or genre keyword.")
-
-if scenario != "15 – Psycho 1960 Film (Trained AI Model)":
-
-    st.write("---")
-    st.write("### IMDb Ratings Table")
-    if not IMDB_Ratings.empty:
-        st.dataframe(IMDB_Ratings, width="stretch", height=400)
-    else:
-        st.warning("IMDb Ratings table is empty or failed to load.")
-
-    st.write("### My Ratings Table")
-    if not My_Ratings.empty:
-        My_Ratings['Year_Sort'] = pd.to_numeric(My_Ratings['Year'], errors='coerce')
-        My_Ratings_sorted = My_Ratings.sort_values(by="Year_Sort", ascending=False)
-        display_ratings = My_Ratings_sorted.rename(columns={"Your Rating": "My Ratings"})
-        display_ratings = display_ratings.drop(columns=['Year_Sort'])
-        st.dataframe(display_ratings, width="stretch", height=400)
-    else:
-        st.warning("My Ratings table is empty or failed to load.")
