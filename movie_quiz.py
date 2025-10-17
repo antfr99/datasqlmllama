@@ -1517,26 +1517,24 @@ This scenario allows you to ask **natural-language questions** about my personal
         else:
             st.info("No matching films found. Try a different director surname or genre keyword.")
 
+
+# --- Scenario 15: Psycho 1960 AI Model ---
 if scenario == "15 – Psycho 1960 Film (Trained AI Model)":
-    from movie_quiz import ask_psycho_question  # make sure movie_quiz.py is in the same folder
+    
+    from movie_quiz import ask_psycho_question  # make sure this is function-only
 
     st.header("🎬 Psycho 1960 - Trained AI Model")
 
-    # --- Explanation for users ---
     st.markdown("""
-    ### About This Psycho 1960 Trained AI Model
-
-    This AI model was **trained and fine-tuned locally** using **LoRA (Low-Rank Adaptation)** on top of TinyLlama 1.1B Chat.
-    It provides answers informed by the content of the film.
+    This AI model was **trained locally** using TinyLlama 1.1B Chat + LoRA.
+    It allows you to ask questions about the 1960 film *Psycho* and get AI-generated answers.
     """)
 
-    # --- User question input ---
+    # User question input
     question = st.text_input("Ask a question about the 1960 film Psycho:")
     if question:
         try:
-            # Call the function from movie_quiz.py
             answer = ask_psycho_question(question)
             st.success(f"🎬 Answer: {answer}")
         except Exception as e:
             st.error(f"⚠️ Failed to get answer: {e}")
-
