@@ -22,7 +22,7 @@ st.set_page_config(
 
 st.title("IMDb/SQL/PYTHON Data Project 🎬")
 st.write("""
-This is a film/data project that integrates several Python libraries, including Pandas, PandasQL, NumPy, Streamlit, Scikit-learn, SciPy, TextBlob, Matplotlib, Seaborn, Torch, NetworkX and Sentence-Transformers. It also incorporates SQL, Hugging Face OMDb API, AI, GitHub, and IMDb.
+This is a film/data project that integrates several Python libraries, including Pandas, PandasQL, NumPy, Streamlit, Scikit-learn, SciPy, TextBlob, Matplotlib, Seaborn, NetworkX and Sentence-Transformers. It also incorporates SQL, OMDb API, AI, GitHub, and IMDb.
 """)
 
 # --- Load Excel files ---
@@ -94,7 +94,8 @@ scenario = st.radio(
         "12 – Feature Hypothesis Testing",
         "13 – Semantic Genre & Recommendations (Deep Learning / NLP)",
         "14 – Live Ratings Monitor (MLOps + CI/CD + Monitoring)",
-        "15 – Psycho 1960 Film (Trained AI Model)"
+                
+                
     ]
 )
 
@@ -1249,10 +1250,10 @@ Given movie features (IMDb rating, genre, director, year, votes), the model pred
     # --- OMDb API key ---
     OMDB_API_KEY = "e9476c0a"
 
-    # --- Select top 100 films ---
-    top100_films = IMDB_Ratings[
+    # --- Select top 250 films ---
+    top250_films = IMDB_Ratings[
     IMDB_Ratings['Genre'].str.contains("Horror", case=False, na=False)
-    ].sort_values(by="IMDb Rating", ascending=False).head(100)
+    ].sort_values(by="IMDb Rating", ascending=False).head(250)
 
 
     # --- Run Button ---
@@ -1279,7 +1280,7 @@ Given movie features (IMDb rating, genre, director, year, votes), the model pred
         results = []
 
         # --- Fetch live ratings from OMDb using Movie ID (IMDb ID) ---
-        for _, row in top100_films.iterrows():
+        for _, row in top250_films.iterrows():
             movie_id = row["Movie ID"]
             static_rating = row["IMDb Rating"]
 
@@ -1344,7 +1345,7 @@ Given movie features (IMDb rating, genre, director, year, votes), the model pred
 
         # Only predict for unseen movies from the current Horror subset with rating changes
         predict_df = df_ml[
-        (df_ml['Movie ID'].isin(top100_films['Movie ID'])) &
+        (df_ml['Movie ID'].isin(top250_films['Movie ID'])) &
         (df_ml['Rating Difference'].notna()) &
         (df_ml['Your Rating'].isna())
         ].copy()
@@ -1515,28 +1516,3 @@ This scenario allows you to ask **natural-language questions** about my personal
             st.dataframe(filtered_sorted)
         else:
             st.info("No matching films found. Try a different director surname or genre keyword.")
-
-
-if scenario == "15 – Psycho 1960 Film (Trained AI Model)":
-    from movie_quiz import ask_psycho_question  # make sure movie_quiz.py is in the same folder
-
-    st.header("🎬 Psycho 1960 - Trained AI Model")
-
-    # --- Explanation for users ---
-    st.markdown("""
-    ### About This Psycho 1960 Trained AI Model
-
-    This AI model was **trained and fine-tuned locally** using **LoRA (Low-Rank Adaptation)** on top of TinyLlama 1.1B Chat.
-    It provides answers informed by the content of the film.
-    """)
-
-    # --- User question input ---
-    question = st.text_input("Ask a question about the 1960 film Psycho:")
-    if question:
-        try:
-            # Call the function from movie_quiz.py
-            answer = ask_psycho_question(question)
-            st.success(f"🎬 Answer: {answer}")
-        except Exception as e:
-            st.error(f"⚠️ Failed to get answer: {e}")
-
