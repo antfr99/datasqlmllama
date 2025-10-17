@@ -103,27 +103,40 @@ scenario = st.radio(
 # --- Scenario 15: Psycho 1960 Film (Trained AI Model) ---
 if scenario == "15 – Psycho 1960 Film (Trained AI Model)":
     st.header("Scenario 15 – Psycho 1960 Film AI Assistant 🎬🧠")
-    st.write("This scenario loads your fine-tuned TinyLLaMA model hosted on Hugging Face.")
+    st.write("This loads the TinyLLaMA base model and applies your fine-tuned Psycho adapter from Hugging Face.")
 
-    from transformers import AutoModelForCausalLM, AutoTokenizer
     import torch
+    from transformers import AutoModelForCausalLM, AutoTokenizer
+    from peft import PeftModel
 
     @st.cache_resource
-    def load_model():
-        model_id = "antfr99/tinylama-psychofilm"  # your Hugging Face repo
-        tokenizer = AutoTokenizer.from_pretrained(model_id)
-        model = AutoModelForCausalLM.from_pretrained(
-            model_id,
-            torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
-            device_map="auto"
-        )
-        model.eval()
-        return tokenizer, model
+    def load_psycho_model():
+        try:
+            base_model_id = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"   # base model on HF
+            adapter_id    = "antfr99/tinylama-psychofilm"          # your adapter on HF
 
-    tokenizer, model = load_model()
+            # 1️⃣ Load base TinyLLaMA
+            tokenizer = AutoTokenizer.from_pretrained(base_model_id)
+            model = AutoModelForCausalLM.from_pretrained(
+                base_model_id,
+                torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
+                device_map="auto"
+            )
+
+            # 2️⃣ Apply your Psycho adapter from HF
+            model = PeftModel.from_pretrained(model, adapter_id)
+            model.eval()
+
+            return tokenizer, model
+
+        except Exception as e:
+            st.error(f"Error loading Psycho model: {e}")
+            return None, None
+
+    tokenizer, model = load_psycho_model()
 
     if tokenizer and model:
-        st.success("✅ Model loaded successfully from Hugging Face!")
+        st.success("✅ Psycho TinyLLaMA adapter loaded successfully!")
         question = st.text_area(
             "Ask about *Psycho* (1960):",
             placeholder="Example: Who plays Norman Bates? What happens in the shower scene?"
@@ -145,6 +158,10 @@ if scenario == "15 – Psycho 1960 Film (Trained AI Model)":
                     st.write(answer)
                 except Exception as e:
                     st.error(f"Error generating answer: {e}")
+    else:
+        st.warning("⚠️ Model could not be loaded.")
+
+
 
 
 # --- Scenario 1: SQL Playground ---
