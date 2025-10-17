@@ -101,6 +101,7 @@ scenario = st.radio(
 
 
 
+
 # --- Scenario 1: SQL Playground ---
 if scenario == "1 – Highlight Disagreements (SQL)":
     st.header("1 – Highlight Disagreements (SQL)")
