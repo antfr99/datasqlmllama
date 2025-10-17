@@ -101,19 +101,15 @@ scenario = st.radio(
 )
 
 
-# --- Scenario 15: Psycho 1960 AI Model ---
 if scenario == "15 – Psycho 1960 Film (Trained AI Model)":
-    
-    from movie_quiz import ask_psycho_question  # make sure this file only has functions
+    from movie_quiz import ask_psycho_question
 
     st.header("🎬 Psycho 1960 - Trained AI Model")
-
     st.markdown("""
-    This AI model was **trained locally** using TinyLlama 1.1B Chat + LoRA.
+    This AI model was trained locally using TinyLlama 1.1B Chat + LoRA.
     Ask any question about the 1960 film *Psycho* and get AI-generated answers.
     """)
 
-    # User input for questions
     question = st.text_input("Ask a question about the 1960 film Psycho:")
     if question:
         try:
@@ -121,6 +117,7 @@ if scenario == "15 – Psycho 1960 Film (Trained AI Model)":
             st.success(f"🎬 Answer: {answer}")
         except Exception as e:
             st.error(f"⚠️ Failed to get answer: {e}")
+
 
 
 # --- Scenario 1: SQL Playground ---
